@@ -1,0 +1,25 @@
+# Confidential datasets
+data/raw/*
+data/supporting/*
+!data/raw/.gitkeep
+!data/supporting/.gitkeep
+
+# Generated outputs
+outputs/*.csv
+outputs/*.log
+
+# Database
+*.db
+*.sqlite3
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Environment
+.env
+
+# IDE
+.vscode/
+.idea/
