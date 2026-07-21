@@ -1,20 +1,25 @@
+.PHONY: load validate test ratios report dashboard api clean
+
 load:
-	@echo "Running ETL pipeline..."
+	python -m src.etl.loader
+
+validate:
+	python -m src.etl.validator
 
 ratios:
-	@echo "Calculating financial ratios..."
+	@echo Calculating financial ratios...
 
 test:
-	@echo "Running tests..."
+	pytest -v tests/
 
 report:
-	@echo "Generating reports..."
+	@echo Generating reports...
 
 dashboard:
-	@echo "Launching Streamlit dashboard..."
+	@echo Launching Streamlit dashboard...
 
 api:
-	@echo "Starting FastAPI server..."
+	@echo Starting FastAPI server...
 
 clean:
-	@echo "Cleaning temporary files..."
+	del /Q outputs\*.csv 2>nul || exit 0
