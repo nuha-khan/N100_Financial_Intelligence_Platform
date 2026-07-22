@@ -1,5 +1,7 @@
 import os
 import pandas as pd
+import sqlite3
+import time
 
 from src.etl.normaliser import normalize_year, normalize_ticker
 
@@ -15,7 +17,13 @@ def load_excel(file_path):
 
     print(f"\nLoading {os.path.basename(file_path)}...")
 
-    df = pd.read_excel(file_path, skiprows=1)
+    # Raw financial datasets have an extra title row
+    if "data/raw" in file_path.replace("\\", "/"):
+        df = pd.read_excel(file_path, skiprows=1)
+
+    # Supporting datasets already have headers
+    else:
+        df = pd.read_excel(file_path)
 
     for column, normalizer in NORMALIZERS.items():
 
@@ -77,7 +85,75 @@ def load_all_files():
 
     print("\nTotal number of datasets loaded : ",len(datasets))
     return datasets
-    
+
+def create_database(db_path="data/nifty100.db"):
+    """
+    Create SQLite database and execute schema.sql.
+    """
+
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
+
+    conn = sqlite3.connect(db_path)
+
+    conn.execute("PRAGMA foreign_keys = ON;")
+
+    with open("src/etl/schema.sql", "r", encoding="utf-8") as f:
+        conn.executescript(f.read())
+
+    print(f"\nDatabase created successfully: {db_path}")
+
+    return conn
+
+
+def load_to_sqlite(datasets, conn):
+    """
+    Load all datasets into SQLite.
+    """
+
+    start = time.time()
+
+    load_order = [
+        "companies",
+        "analysis",
+        "profitandloss",
+        "balancesheet",
+        "cashflow",
+        "documents",
+        "prosandcons",
+        "sectors",
+        "market_cap",
+        "stock_prices",
+        "financial_ratios",
+        "peer_groups",
+    ]
+
+    for table in load_order:
+
+        if table not in datasets:
+            continue
+
+        df = datasets[table]
+
+        df.to_sql(table, conn, if_exists="replace", index=False,)
+
+        db_rows = conn.execute(
+            f"SELECT COUNT(*) FROM {table}"
+        ).fetchone()[0]
+
+        print(
+            f"Loaded {table:<20} "
+            f"Source: {len(df):>5} rows | "
+            f"SQLite: {db_rows:>5} rows"
+        )
+
+    conn.commit()
+
+    runtime = round(time.time() - start, 2)
+
+    print(f"\nSQLite loading completed in {runtime} seconds.")
+
+    conn.close()
+
 
 if __name__ == "__main__":
 
@@ -87,3 +163,7 @@ if __name__ == "__main__":
 
     for name, df in datasets.items():
         print(f"{name:<25} {len(df)} rows")
+
+    conn = create_database()
+
+    load_to_sqlite(datasets, conn)
