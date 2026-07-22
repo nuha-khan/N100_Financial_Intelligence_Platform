@@ -2,12 +2,16 @@ import os
 import pandas as pd
 import sqlite3
 import time
+from datetime import datetime
 
 from src.etl.normaliser import normalize_year, normalize_ticker
 
 
 # Column-wise normalizers
-NORMALIZERS = {"company_id": normalize_ticker,"year": normalize_year,}
+NORMALIZERS = {
+    "company_id": normalize_ticker,
+    "year": normalize_year,
+}
 
 
 def load_excel(file_path):
@@ -29,13 +33,7 @@ def load_excel(file_path):
 
         if column in df.columns:
 
-            # print(f"\nBefore normalizing '{column}':")
-            # print(df[column].head())
-
             df[column] = df[column].apply(normalizer)
-
-            # print(f"\nAfter normalizing '{column}':")
-            # print(df[column].head())
 
     # Remove rows where the year could not be normalized (e.g. TTM)
     if "year" in df.columns:
@@ -83,8 +81,10 @@ def load_all_files():
 
                 datasets[dataset_name] = load_excel(file_path)
 
-    print("\nTotal number of datasets loaded : ",len(datasets))
+    print("\nTotal number of datasets loaded :", len(datasets))
+
     return datasets
+
 
 def create_database(db_path="data/nifty100.db"):
     """
@@ -112,6 +112,8 @@ def load_to_sqlite(datasets, conn):
 
     start = time.time()
 
+    load_audit = []
+
     load_order = [
         "companies",
         "analysis",
@@ -128,29 +130,50 @@ def load_to_sqlite(datasets, conn):
     ]
 
     for table in load_order:
-
         if table not in datasets:
             continue
 
+        table_start = time.time()
+
         df = datasets[table]
 
-        df.to_sql(table, conn, if_exists="replace", index=False,)
+        rows_in = len(df)
+
+        df.to_sql(table, conn, if_exists="replace", index=False)
 
         db_rows = conn.execute(
             f"SELECT COUNT(*) FROM {table}"
         ).fetchone()[0]
 
+        runtime = round(time.time() - table_start, 3)
+
+        load_audit.append({
+            "table": table,
+            "rows_in": rows_in,
+            "rows_out": db_rows,
+            "rejected": rows_in - db_rows,
+            "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "runtime_s": runtime
+        })
+
         print(
             f"Loaded {table:<20} "
-            f"Source: {len(df):>5} rows | "
+            f"Source: {rows_in:>5} rows | "
             f"SQLite: {db_rows:>5} rows"
         )
 
     conn.commit()
 
+    os.makedirs("outputs", exist_ok=True)
+
+    audit_df = pd.DataFrame(load_audit)
+
+    audit_df.to_csv("outputs/load_audit.csv", index=False)
+
     runtime = round(time.time() - start, 2)
 
     print(f"\nSQLite loading completed in {runtime} seconds.")
+    print("Load audit saved to outputs/load_audit.csv")
 
     conn.close()
 
