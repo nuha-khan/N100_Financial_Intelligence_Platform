@@ -7,7 +7,7 @@ validate:
 	python -m src.etl.validator
 
 ratios:
-	@echo Calculating financial ratios...
+	python -m src.analytics.ratio_engine
 
 test:
 	pytest -v tests/
