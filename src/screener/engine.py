@@ -1,6 +1,9 @@
 import sqlite3
 import pandas as pd
 import yaml
+from src.screener.scoring import compute_composite_score
+from src.screener.export import export_screeners
+from src.screener.format_excel import colour_screeners
 
 DB_PATH = "data/nifty100.db"
 CONFIG_PATH = "config/screener_config.yaml"
@@ -181,7 +184,7 @@ def run_preset(preset_name):
         sectors,
         market,
     )
-
+    df = compute_composite_score(df)
     config = load_config()
 
     if preset_name not in config:
@@ -209,18 +212,20 @@ if __name__ == "__main__":
         "turnaround_watch",
     ]
 
+    all_results = {}
+
     for preset in presets:
 
         result = run_preset(preset)
 
-        print(f"\n{preset.upper()}")
+        all_results[preset] = result
 
+        print(f"\n{preset.upper()}")
         print("-" * 40)
 
-        print(
-            f"Unique Companies : {result['company_id'].nunique()}"
-        )
+        print(f"Unique Companies : {result['company_id'].nunique()}")
 
-        print(
-            f"Company-Year Rows: {len(result)}"
-        )
+        print(f"Company-Year Rows: {len(result)}")
+
+    export_screeners(all_results)
+    colour_screeners("outputs/screener_output.xlsx")
