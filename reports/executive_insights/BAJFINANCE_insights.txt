@@ -1,0 +1,23 @@
+============================================================
+EXECUTIVE INSIGHTS REPORT
+============================================================
+
+Company    : BAJFINANCE
+Peer Group : Consumer Finance
+
+Strengths
+------------------------------
+✓ Return on Equity
+✓ Return on Capital Employed
+✓ Net Profit Margin
+✓ Debt to Equity
+✓ PAT CAGR (5Y)
+✓ Revenue CAGR (5Y)
+
+Weaknesses
+------------------------------
+None
+
+Overall Assessment
+------------------------------
+The company outperforms its peer group across most key financial metrics and demonstrates strong overall quality.

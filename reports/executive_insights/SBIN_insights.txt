@@ -1,0 +1,24 @@
+============================================================
+EXECUTIVE INSIGHTS REPORT
+============================================================
+
+Company    : SBIN
+Peer Group : Public Sector Banks
+
+Strengths
+------------------------------
+✓ Return on Equity
+✓ Return on Capital Employed
+✓ Net Profit Margin
+✓ Debt to Equity
+✓ Free Cash Flow
+✓ PAT CAGR (5Y)
+
+Weaknesses
+------------------------------
+• Revenue CAGR (5Y)
+• Composite Quality Score
+
+Overall Assessment
+------------------------------
+The company outperforms its peer group across most key financial metrics and demonstrates strong overall quality.
