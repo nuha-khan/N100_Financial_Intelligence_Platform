@@ -7,6 +7,7 @@ data/supporting/*
 # Generated outputs
 outputs/*.csv
 outputs/*.log
+outputs/*.xlsx
 reports/executive_insights/*
 !reports/executive_insights/.gitkeep
 
