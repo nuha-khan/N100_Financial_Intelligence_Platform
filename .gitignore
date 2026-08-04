@@ -7,10 +7,20 @@ data/supporting/*
 # Generated outputs
 outputs/*.csv
 outputs/*.log
-reports/executive_insights/
-reports/radar_charts/
-reports/tearsheets/
-reports/portfolio/
+reports/executive_insights/*
+!reports/executive_insights/.gitkeep
+
+reports/radar_charts/*
+!reports/radar_charts/.gitkeep
+
+reports/portfolio/*
+!reports/portfolio/.gitkeep
+
+reports/sector/*
+!reports/sector/.gitkeep
+
+reports/tearsheets/*
+!reports/tearsheets/.gitkeep
 
 # Database
 *.db
