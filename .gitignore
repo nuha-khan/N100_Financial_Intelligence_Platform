@@ -7,6 +7,10 @@ data/supporting/*
 # Generated outputs
 outputs/*.csv
 outputs/*.log
+reports/executive_insights/
+reports/radar_charts/
+reports/tearsheets/
+reports/portfolio/
 
 # Database
 *.db
