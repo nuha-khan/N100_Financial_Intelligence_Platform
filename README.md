@@ -49,9 +49,12 @@ A Python-based financial analytics platform for the Nifty 100 index that transfo
 
 ## Project Structure
 
+```text
 N100_Financial_Intelligence_Platform/
 │
 ├── config/
+│   └── screener_config.yaml
+│
 ├── data/
 │   ├── raw/
 │   └── supporting/
@@ -72,17 +75,29 @@ N100_Financial_Intelligence_Platform/
 │   │   ├── ratio_engine.py
 │   │   ├── peer.py
 │   │   └── valuation.py
+│   │
 │   ├── dashboard/
 │   │   ├── app.py
 │   │   ├── pages/
+│   │   │   ├── 01_home.py
+│   │   │   ├── 02_profile.py
+│   │   │   ├── 03_screener.py
+│   │   │   ├── 04_peers.py
+│   │   │   ├── 05_trends.py
+│   │   │   ├── 06_sectors.py
+│   │   │   ├── 07_capital.py
+│   │   │   └── 08_reports.py
+│   │   │
 │   │   └── utils/
+│   │       └── db.py
+│   │
 │   ├── etl/
 │   └── screener/
 │
 ├── tests/
+│
 ├── requirements.txt
 └── README.md
-
 ---
 
 ## Implemented Modules
