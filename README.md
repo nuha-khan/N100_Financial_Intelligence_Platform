@@ -98,7 +98,7 @@ N100_Financial_Intelligence_Platform/
 │
 ├── requirements.txt
 └── README.md
----
+```
 
 ## Implemented Modules
 
