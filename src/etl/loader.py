@@ -35,6 +35,16 @@ def load_excel(file_path):
 
             df[column] = df[column].apply(normalizer)
 
+    # Dataset-specific ticker corrections.
+    # These correct known source-data ticker mismatches without
+    # changing the global normalize_ticker() behavior.
+    filename = os.path.basename(file_path).lower()
+
+    if filename == "cashflow.xlsx" and "company_id" in df.columns:
+        df["company_id"] = df["company_id"].replace({
+            "AGTL": "ATGL"
+        })
+
     # Remove rows where the year could not be normalized (e.g. TTM)
     if "year" in df.columns:
 
