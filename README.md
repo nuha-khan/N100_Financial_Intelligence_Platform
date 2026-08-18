@@ -1,53 +1,121 @@
 # N100 Financial Intelligence Platform
 
-A Python-based financial analytics platform for the Nifty 100 index that transforms raw financial statements into structured analytics using automated ETL pipelines, financial ratios, screening models, peer comparison, valuation analytics, and an interactive Streamlit dashboard.
+A Python-based financial intelligence platform for the **Nifty 100** that transforms raw financial data into structured analytics, investment insights, peer intelligence, valuation analysis, automated reports, and an interactive dashboard.
 
-> ✅ **Status:** Sprint 4 Completed — Dashboard & Valuation Module
+> **Status: Completed — Sprints 1–5**
 
 ---
 
-## Features
+## Overview
 
-- Automated ETL pipeline for 12 financial datasets
-- Data normalization and 16 Data Quality rules
-- SQLite financial data warehouse
-- 50+ financial KPIs and ratio analysis
-- Revenue, PAT and EPS CAGR analysis
-- Free Cash Flow and CapEx analytics
-- Capital allocation classification
-- Composite quality scoring
-- Configurable financial screener with 6 presets
-- Peer comparison and radar analysis
-- Sector and trend analysis
-- 8-screen interactive Streamlit dashboard
-- Valuation analysis with FCF Yield and P/E flags
-- CSV and Excel exports
-- Automated validation and reporting
+The platform processes financial data for **92 Nifty 100 companies** through an end-to-end analytics pipeline:
+
+**Raw Data → ETL & Validation → SQLite Database → Financial Analytics → Intelligence & NLP → Reports → FastAPI → Streamlit Dashboard**
+
+The platform combines fundamental financial analysis, cash-flow intelligence, peer benchmarking, screening, valuation, clustering, automated reporting, and NLP-generated investment pros and cons.
+
+---
+
+## Key Features
+
+* Automated ETL pipeline for 12 financial datasets
+* Data normalization and 16 Data Quality validation rules
+* SQLite financial data warehouse
+* 30+ financial KPIs and ratios
+* Revenue, PAT and EPS CAGR analysis
+* Free Cash Flow and CapEx analytics
+* CFO quality and cash-flow intelligence
+* Capital allocation classification
+* Composite financial quality scoring
+* Configurable financial screener with 6 investment presets
+* Peer-group benchmarking and percentile analysis
+* Radar chart analysis
+* Company clustering and cluster profiling
+* Valuation analytics including P/E and FCF Yield
+* NLP-based investment pros and cons with confidence scores
+* Automated company tearsheets
+* Sector-level PDF reports
+* Portfolio summary report
+* FastAPI REST API
+* Interactive Streamlit dashboard
+* CSV and Excel exports
+* Automated test suite
+* SQLite query-performance indexes
 
 ---
 
 ## Tech Stack
 
-### Languages & Libraries
+### Core
 
-- Python
-- Pandas
-- NumPy
-- SQLite
-- OpenPyXL
-- Plotly
-- Streamlit
-- PyYAML
+* Python
+* Pandas
+* NumPy
+* SQLite
+* SQLAlchemy
+* OpenPyXL
+* PyYAML
 
-### Tools
+### Analytics & Visualization
 
-- Git
-- GitHub
-- VS Code
+* Matplotlib
+* Plotly
+* Streamlit
+
+### API & Reporting
+
+* FastAPI
+* Uvicorn
+* ReportLab
+
+### Testing & Development
+
+* Pytest
+* Git
+* GitHub
+* VS Code
 
 ---
 
-## Project Structure
+# Project Architecture
+
+```text
+Raw Financial Data
+       │
+       ▼
+┌─────────────────────┐
+│     ETL Pipeline    │
+│ Loader + Normalizer │
+│     + Validator     │
+└──────────┬──────────┘
+           │
+           ▼
+┌─────────────────────┐
+│    SQLite Database  │
+│     nifty100.db     │
+└──────────┬──────────┘
+           │
+           ├──────────────► Financial Ratios
+           ├──────────────► CAGR & Cash Flow
+           ├──────────────► Capital Allocation
+           ├──────────────► Peer Intelligence
+           ├──────────────► Clustering
+           ├──────────────► Valuation
+           ├──────────────► Screener
+           └──────────────► NLP Intelligence
+                              │
+                 ┌────────────┴────────────┐
+                 ▼                         ▼
+          FastAPI REST API          Automated Reports
+                 │                         │
+                 └────────────┬────────────┘
+                              ▼
+                    Streamlit Dashboard
+```
+
+---
+
+# Project Structure
 
 ```text
 N100_Financial_Intelligence_Platform/
@@ -59,22 +127,45 @@ N100_Financial_Intelligence_Platform/
 │   ├── raw/
 │   └── supporting/
 │
+├── docs/
+│
+├── notebooks/
+│
 ├── outputs/
-│   ├── validation_failures.csv
-│   ├── load_audit.csv
-│   ├── capital_allocation.csv
-│   ├── screener_output.xlsx
-│   ├── valuation_summary.xlsx
-│   └── valuation_flags.csv
 │
 ├── reports/
-│   └── radar_charts/
+│   ├── assets/
+│   ├── radar_charts/
+│   ├── tearsheets/
+│   └── *.pdf
 │
 ├── src/
 │   ├── analytics/
-│   │   ├── ratio_engine.py
+│   │   ├── cagr.py
+│   │   ├── capital_allocation.py
+│   │   ├── cashflow_kpis.py
+│   │   ├── clustering.py
+│   │   ├── cluster_profiling.py
+│   │   ├── insights.py
 │   │   ├── peer.py
+│   │   ├── radar.py
+│   │   ├── ratios.py
+│   │   ├── ratio_engine.py
 │   │   └── valuation.py
+│   │
+│   ├── api/
+│   │   ├── main.py
+│   │   ├── database.py
+│   │   └── routers/
+│   │       ├── companies.py
+│   │       ├── documents.py
+│   │       ├── health.py
+│   │       ├── market_cap.py
+│   │       ├── peers.py
+│   │       ├── portfolio.py
+│   │       ├── screener.py
+│   │       ├── sectors.py
+│   │       └── valuation.py
 │   │
 │   ├── dashboard/
 │   │   ├── app.py
@@ -87,213 +178,454 @@ N100_Financial_Intelligence_Platform/
 │   │   │   ├── 06_sectors.py
 │   │   │   ├── 07_capital.py
 │   │   │   └── 08_reports.py
-│   │   │
 │   │   └── utils/
-│   │       └── db.py
 │   │
 │   ├── etl/
+│   │   ├── loader.py
+│   │   ├── normaliser.py
+│   │   └── validator.py
+│   │
+│   ├── nlp/
+│   │   ├── parser.py
+│   │   └── pros_cons_generator.py
+│   │
+│   ├── reports/
+│   │   ├── tearsheet.py
+│   │   ├── batch_reports.py
+│   │   └── portfolio_report.py
+│   │
 │   └── screener/
+│       ├── engine.py
+│       ├── scoring.py
+│       └── export.py
 │
 ├── tests/
+│   ├── api/
+│   ├── dq/
+│   └── performance/
 │
+├── Makefile
 ├── requirements.txt
 └── README.md
 ```
 
-## Implemented Modules
+---
 
-### Sprint 1 — Data Foundation
+# Major Modules
 
-- Excel data ingestion
-- Data normalization
-- SQLite schema and loading
-- 16 Data Quality rules
-- Validation reports
-- Load audit generation
+## 1. ETL & Data Quality
 
-### Sprint 2 — Financial Analytics
+The ETL layer loads and normalizes the financial datasets before storing them in SQLite.
 
-- Profitability ratios: ROE, ROCE, ROA, NPM, OPM
-- Leverage and efficiency ratios
-- Revenue, PAT and EPS CAGR
-- Free Cash Flow and CapEx analysis
-- Capital allocation classification
-- Composite Quality Score
+Implemented:
 
-### Sprint 3 — Screener & Peer Comparison
+* Excel ingestion
+* Year normalization
+* Company/ticker normalization
+* Database creation and loading
+* Primary-key validation
+* Company-year uniqueness validation
+* Foreign-key integrity checks
+* Balance-sheet validation
+* OPM validation
+* Positive-sales validation
+* Year-format validation
+* Cash-flow validation
+* Tax and dividend validation
+* Annual-report URL validation
+* EPS validation
+* BSE/ASE balance validation
+* Coverage validation
 
-#### Financial Screener
+---
 
-- 6 investment presets:
-  - Quality
-  - Value
-  - Growth
-  - Dividend
-  - Debt-Free
-  - Turnaround
-- Multi-metric filtering
-- Sector-aware screening
-- Composite score integration
-- CSV/Excel reporting
+## 2. Financial Analytics
 
-#### Peer Comparison
+The analytics layer calculates fundamental financial metrics including:
 
-- Peer group mapping
-- Percentile ranking
-- Financial metric benchmarking
-- Radar chart comparison
+* Net Profit Margin
+* Operating Profit Margin
+* ROE
+* ROCE
+* ROA
+* Debt-to-Equity
+* Interest Coverage
+* Net Debt
+* Asset Turnover
+* EPS
+* Book Value per Share
+* Dividend Payout
+* Revenue CAGR
+* PAT CAGR
+* EPS CAGR
+* Free Cash Flow
+* FCF Conversion
+* CapEx Intensity
+* CFO Quality
+* Capital Allocation Pattern
+* Composite Quality Score
 
-### Sprint 4 — Dashboard & Valuation
+---
 
-#### Interactive Dashboard
+## 3. Cash Flow Intelligence
 
-The Streamlit dashboard contains 8 screens:
+Cash-flow analysis evaluates the quality and sustainability of company cash generation.
+
+The module identifies:
+
+* CFO quality
+* Free cash flow
+* FCF conversion
+* CapEx intensity
+* Capital allocation patterns
+* Deleveraging behaviour
+* Cash-flow distress signals
+* FCF growth
+
+---
+
+## 4. Investment Screener
+
+The screener supports configurable multi-metric filtering and six predefined investment strategies:
+
+1. Quality
+2. Value
+3. Growth
+4. Dividend
+5. Debt-Free
+6. Turnaround
+
+Results can be exported for further analysis.
+
+---
+
+## 5. Peer Intelligence
+
+The peer analytics module provides:
+
+* Peer-group classification
+* Financial benchmarking
+* Percentile rankings
+* Company-vs-peer comparison
+* Radar chart visualization
+* Peer-based financial positioning
+
+---
+
+## 6. Clustering & Advanced Analytics
+
+Companies are grouped using financial characteristics to identify similar business/financial profiles.
+
+Implemented:
+
+* Feature preparation
+* Missing-value handling
+* Sector-median imputation
+* Cluster analysis
+* Elbow analysis
+* Cluster naming
+* Cluster profiling
+* Correlation analysis
+* Outlier reporting
+* Portfolio statistics
+
+---
+
+## 7. Valuation
+
+The valuation module evaluates companies using fundamental valuation indicators including:
+
+* P/E ratio
+* Five-year median P/E
+* Sector median P/E
+* FCF Yield
+* Valuation flags
+
+Companies are categorized into valuation conditions such as:
+
+* Fair
+* Discount
+* Caution
+
+---
+
+# NLP Investment Intelligence
+
+The NLP module parses analytical data and generates rule-based investment insights.
+
+For each company, the system evaluates financial conditions and generates:
+
+* Investment Pros
+* Investment Cons
+* Confidence scores
+* Coverage information
+
+The system uses predefined financial rules rather than free-form text generation, allowing the generated signals to remain traceable to underlying financial metrics.
+
+---
+
+# Automated Reports
+
+The reporting layer generates:
+
+### Company Tearsheets
+
+Individual financial tearsheets containing:
+
+* Company overview
+* Financial KPIs
+* Revenue and profit trends
+* ROE/ROCE analysis
+* Balance-sheet analysis
+* Cash-flow analysis
+* Capital allocation
+* Investment pros and cons
+* Financial visualizations
+
+### Sector Reports
+
+Sector-level reports summarize company and sector financial characteristics.
+
+### Portfolio Report
+
+A consolidated portfolio-level PDF provides a high-level view of the Nifty 100 financial universe.
+
+---
+
+# FastAPI
+
+The platform exposes its analytical data through a REST API.
+
+Available API modules include:
+
+* Companies
+* Documents
+* Health
+* Market Capitalization
+* Peers
+* Portfolio
+* Screener
+* Sectors
+* Valuation
+
+### API Base URL
+
+```text
+http://127.0.0.1:8000
+```
+
+### Health Check
+
+```text
+GET /api/v1/health
+```
+
+The health endpoint reports application status, database row counts, uptime, and API version.
+
+Interactive API documentation is available through FastAPI's standard documentation interface when the server is running.
+
+---
+
+# Streamlit Dashboard
+
+The platform contains **8 interactive dashboard screens**:
 
 1. **Home** — Nifty 100 overview and key KPIs
-2. **Company Profile** — company-level financial analysis and trends
-3. **Screener** — configurable financial screening and CSV export
-4. **Peer Comparison** — peer benchmarking and radar charts
-5. **Trend Analysis** — historical multi-metric trends
-6. **Sector Analysis** — sector and sub-sector analytics
-7. **Capital Allocation** — company capital allocation patterns
-8. **Annual Reports** — available annual report links
+2. **Company Profile** — company-level financial analysis
+3. **Screener** — configurable investment screening
+4. **Peer Comparison** — peer benchmarking and radar analysis
+5. **Trend Analysis** — historical financial trends
+6. **Sector Analysis** — sector-level analytics
+7. **Capital Allocation** — market and capital allocation analysis
+8. **Reports & Insights** — executive insights, radar charts and generated reports
 
-#### Valuation Module
+### Run Dashboard
 
-Implemented in:
-
-src/analytics/valuation.py
-
-Calculates:
-
-- FCF Yield
-- Sector median P/E
-- P/E valuation comparison
-- Caution / Discount / Fair classification
-
-Valuation outputs:
-
-- outputs/valuation_summary.xlsx
-- outputs/valuation_flags.csv
-
-The valuation module was validated for the complete 92-company universe.
-
----
-
-## Dashboard
-
-Run the Streamlit application with:
-
+```bash
 streamlit run src/dashboard/app.py
+```
 
-The dashboard runs locally at:
+Dashboard:
 
+```text
 http://localhost:8501
+```
 
 ---
 
-## Validation
+# Database
 
-Sprint 4 dashboard verification confirmed:
+The project uses SQLite as its analytical data warehouse.
 
-- All 8 screens load successfully
-- Company and year selections work
-- Screener filters and presets work
-- CSV export works
-- Peer and radar analysis work
-- Sector and capital allocation pages work
-- Annual report availability is handled
-- Missing financial data displays as N/A
-- Missing pros/cons are handled gracefully
-- Charts remain within the dashboard layout
-- Valuation module produces results for all 92 companies
+Key tables include:
 
-### Valuation Results
+```text
+companies
+profitandloss
+balancesheet
+cashflow
+financial_ratios
+company_growth_metrics
+market_cap
+stock_prices
+sectors
+peer_groups
+peer_percentiles
+documents
+analysis
+prosandcons
+```
 
-| Flag | Companies |
-|---|---:|
-| Fair | 48 |
-| Discount | 30 |
-| Caution | 14 |
-| **Total** | **92** |
+Performance indexes were added for frequently queried company/year combinations, including:
+
+```text
+idx_profitandloss_company_year
+idx_balancesheet_company_year
+idx_cashflow_company_year
+idx_financial_ratios_company_year
+idx_documents_company_year
+idx_market_cap_company_year
+idx_peer_percentiles_company_year
+idx_company_growth_metrics_company
+```
+
+Performance observations are documented separately in:
+
+```text
+perf_notes.md
+```
 
 ---
 
-## Database
+# Testing
 
-The SQLite warehouse contains structured tables including:
+The project includes automated tests covering:
 
-- companies
-- profitandloss
-- balancesheet
-- cashflow
-- market_cap
-- sectors
-- peer_groups
-- financial_ratios
-- company_growth_metrics
-- peer_percentiles
+* API endpoints
+* Data-quality validation
+* Database behaviour
+* Performance-related checks
+
+Run the complete test suite with:
+
+```bash
+pytest -v tests/
+```
 
 ---
 
-## Run the Project
+# Makefile Commands
 
-### ETL
+Common project operations are available through the Makefile:
 
+```bash
+make load
+make validate
+make ratios
+make test
+make report
+make dashboard
+make api
+make clean
+```
+
+---
+
+# Running the Project
+
+### 1. Activate virtual environment
+
+Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+### 2. Install dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Load data
+
+```bash
 python -m src.etl.loader
+```
 
-### Validation
+### 4. Validate data
 
+```bash
 python -m src.etl.validator
+```
 
-### Financial Ratio Engine
+### 5. Generate financial ratios
 
+```bash
 python -m src.analytics.ratio_engine
+```
 
-### Screener
+### 6. Run analytics as required
 
+Examples:
+
+```bash
 python -m src.screener.engine
-
-### Peer Comparison
-
 python -m src.analytics.peer
+python -m src.analytics.clustering
+python -m src.analytics.cluster_profiling
+```
 
-### Valuation
+### 7. Start API
 
-python src/analytics/valuation.py
+```bash
+uvicorn src.api.main:app --reload
+```
 
-### Dashboard
+### 8. Start dashboard
 
+```bash
 streamlit run src/dashboard/app.py
+```
 
 ---
 
-## Data
+# Data Availability
 
-The original financial datasets are not included in this repository because they were provided as part of an internship project and are confidential.
+The original financial datasets are not included in this repository because they were provided as part of the internship project and are confidential.
 
-Place supported datasets in:
+Supported input data should be placed under:
 
+```text
 data/raw/
 data/supporting/
+```
 
 ---
 
-## Current Progress
+# Project Completion
 
-| Module | Status |
-|---|---|
-| ETL & Data Foundation | ✅ Completed |
-| Financial Ratio Engine | ✅ Completed |
-| CAGR & Cash Flow Analytics | ✅ Completed |
-| Composite Quality Scoring | ✅ Completed |
-| Financial Screener | ✅ Completed |
-| Peer Comparison | ✅ Completed |
-| Radar Charts | ✅ Completed |
-| Streamlit Dashboard | ✅ Completed |
-| Valuation Module | ✅ Completed |
-| Sprint 4 QA | ✅ Completed |
-| Documentation | ✅ Completed |
+| Component                       | Status      |
+| ------------------------------- | ----------- |
+| ETL & Data Foundation           | ✅ Completed |
+| Data Quality Validation         | ✅ Completed |
+| Financial Ratio Engine          | ✅ Completed |
+| CAGR & Cash Flow Analytics      | ✅ Completed |
+| Capital Allocation Intelligence | ✅ Completed |
+| Financial Screener              | ✅ Completed |
+| Peer Intelligence               | ✅ Completed |
+| Radar Analysis                  | ✅ Completed |
+| Clustering & Advanced Analytics | ✅ Completed |
+| Valuation Module                | ✅ Completed |
+| NLP Pros & Cons                 | ✅ Completed |
+| Company Tearsheets              | ✅ Completed |
+| Sector Reports                  | ✅ Completed |
+| Portfolio Report                | ✅ Completed |
+| FastAPI Backend                 | ✅ Completed |
+| Streamlit Dashboard             | ✅ Completed |
+| Automated Testing               | ✅ Completed |
+| Database Performance Indexing   | ✅ Completed |
+| Documentation                   | ✅ Completed |
 
 ---
 
