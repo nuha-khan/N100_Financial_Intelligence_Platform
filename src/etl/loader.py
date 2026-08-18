@@ -17,6 +17,7 @@ NORMALIZERS = {
 def load_excel(file_path):
     """
     Load a single Excel file and apply column normalization.
+    Remove exact duplicate rows.
     """
 
     print(f"\nLoading {os.path.basename(file_path)}...")
@@ -24,20 +25,15 @@ def load_excel(file_path):
     # Raw financial datasets have an extra title row
     if "data/raw" in file_path.replace("\\", "/"):
         df = pd.read_excel(file_path, skiprows=1)
-
-    # Supporting datasets already have headers
     else:
         df = pd.read_excel(file_path)
 
+    # Apply column normalizers
     for column, normalizer in NORMALIZERS.items():
-
         if column in df.columns:
-
             df[column] = df[column].apply(normalizer)
 
-    # Dataset-specific ticker corrections.
-    # These correct known source-data ticker mismatches without
-    # changing the global normalize_ticker() behavior.
+    # Dataset-specific ticker corrections
     filename = os.path.basename(file_path).lower()
 
     if filename == "cashflow.xlsx" and "company_id" in df.columns:
@@ -45,9 +41,8 @@ def load_excel(file_path):
             "AGTL": "ATGL"
         })
 
-    # Remove rows where the year could not be normalized (e.g. TTM)
+    # Remove rows where year could not be normalized
     if "year" in df.columns:
-
         original_rows = len(df)
 
         df = df.dropna(subset=["year"]).reset_index(drop=True)
@@ -55,7 +50,36 @@ def load_excel(file_path):
         removed_rows = original_rows - len(df)
 
         if removed_rows > 0:
-            print(f"Removed {removed_rows} rows with unparseable year values.")
+            print(
+                f"Removed {removed_rows} rows "
+                f"with unparseable year values."
+            )
+
+    # ---------------------------------------------------------
+    # REMOVE EXACT DUPLICATE ROWS
+    # ---------------------------------------------------------
+
+    # Remove exact financial duplicates.
+    # Ignore the source ID because duplicate records may have
+    # different IDs but identical financial values.
+
+    before_duplicates = len(df)
+
+    dedup_columns = [
+        column for column in df.columns
+        if column != "id"
+    ]
+
+    df = df.drop_duplicates(
+        subset=dedup_columns
+    ).reset_index(drop=True)
+
+    removed_duplicates = before_duplicates - len(df)
+
+    if removed_duplicates > 0:
+        print(
+            f"Removed {removed_duplicates} exact duplicate rows."
+        )
 
     print(f"Loaded {len(df)} rows successfully.")
 
