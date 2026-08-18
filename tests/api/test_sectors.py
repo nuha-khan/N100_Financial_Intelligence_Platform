@@ -42,15 +42,14 @@ def test_sectors_response_structure(client):
         sector = data["sectors"][0]
 
         expected_fields = {
-            "company_id",
             "broad_sector",
-            "sub_sector",
-            "index_weight_pct",
-            "market_cap_category",
+            "company_count",
+            "median_roe",
+            "median_pe",
+            "median_de",
         }
 
         assert expected_fields.issubset(sector.keys())
-
 
 # ---------------------------------------------------------------------
 # GET SINGLE COMPANY SECTOR
