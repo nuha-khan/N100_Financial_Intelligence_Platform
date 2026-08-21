@@ -2,7 +2,7 @@
 
 A Python-based financial intelligence platform for the **Nifty 100** that transforms raw financial data into structured analytics, investment insights, peer intelligence, valuation analysis, automated reports, and an interactive dashboard.
 
-> **Status: Completed — Sprints 1–5**
+> **Status: Completed — Sprints 1–6**
 
 ---
 
